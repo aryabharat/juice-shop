@@ -21,7 +21,7 @@ module.exports = function getUserProfile () {
   return (req: Request, res: Response, next: NextFunction) => {
     fs.readFile('views/userProfile.pug', function (err, buf) {
       if (err != null) throw err
-      const loggedInUser = security.authenticatedUsers.get(req.cookies.token)
+      const loggedInUser = security.authenticatedUsers.get(req.cookies.token.replace(/^(\.\.(\/|\\|$))+/, ''))
       if (loggedInUser) {
         UserModel.findByPk(loggedInUser.data.id).then((user: UserModel | null) => {
           let template = buf.toString()
