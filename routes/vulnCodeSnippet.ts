@@ -40,7 +40,7 @@ export const retrieveCodeSnippet = async (challengeKey: string) => {
 
 exports.serveCodeSnippet = () => async (req: Request<SnippetRequestBody, Record<string, unknown>, Record<string, unknown>>, res: Response, next: NextFunction) => {
   try {
-    const snippetData = await retrieveCodeSnippet(req.params.challenge)
+    const snippetData = await retrieveCodeSnippet(req.params.challenge.replace(/^(\.\.(\/|\\|$))+/, ''))
     if (snippetData == null) {
       res.status(404).json({ status: 'error', error: `No code challenge for challenge key: ${req.params.challenge}` })
       return
@@ -72,7 +72,7 @@ export const getVerdict = (vulnLines: number[], neutralLines: number[], selected
 }
 
 exports.checkVulnLines = () => async (req: Request<Record<string, unknown>, Record<string, unknown>, VerdictRequestBody>, res: Response, next: NextFunction) => {
-  const key = req.body.key
+  const key = req.body.key.replace(/^(\.\.(\/|\\|$))+/, '')
   let snippetData
   try {
     snippetData = await retrieveCodeSnippet(key)
